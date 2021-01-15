@@ -1,0 +1,39 @@
+language: python
+dist: xenial
+python:
+  - "3.9"
+
+stages:
+  - Quality
+  - Publish
+
+before_install:
+  - pip install poetry
+
+install:
+  - poetry install
+
+jobs:
+  include:
+    - stage: Quality
+      name: lint
+      script: make lint
+    - name: type
+      script: make type
+    - name: tests
+      script: make tests
+    - stage: Publish
+      script: skip
+      before_deploy:
+        - poetry config http-basic.pypi $PYPI_USER $PYPI_PASS
+        - poetry build -f sdist
+      deploy:
+        provider: script
+        script: poetry publish
+        skip_cleanup: true
+        on:
+          tags: true
+      if: tag IS present
+
+after_success:
+  poetry run coveralls
