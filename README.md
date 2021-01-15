@@ -26,10 +26,6 @@ Any contributions are welcomed!
 pip install dlmy
 ```
 
-##### Aur
-
-In progress ...
-
 ### Usage
 
 ```bash
