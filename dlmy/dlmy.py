@@ -4,11 +4,17 @@ import requests
 import sys
 import getopt
 import youtube_dl
+import time
 from search import yt_search
+from colors import col
 from bs4 import BeautifulSoup
 
-
 def spotify_track(url):
+    """
+    Get information about a track from Spotify
+    Returns: final song name
+    """
+
     res = requests.get(url)
     soup = BeautifulSoup(res.text, "lxml")
     title = soup.find("meta", property="og:title")
@@ -19,15 +25,22 @@ def spotify_track(url):
 
     return song_name
 
-
 def spotify_playlist(url):
+    """
+    Get every song from a spotify playlist
+    Returns: list of songs
+    """
+
     res = requests.get(url)
     soup = BeautifulSoup(res.text, 'lxml')
     songs = soup.find_all('meta', property="music:song")
 
     return songs
 
+def prompt(ask):
+    return str(input(f"{col.ok}{ask} {col.warn}(Y/n){col.end}"))
 
+# Youtube Download options
 ydl_opts = {
     'format': 'bestaudio/best',
     'writethumbnail': True,
@@ -62,66 +75,74 @@ Usage:
 
 """)
 
+if __name__ == "__main__":
+    try:
+        # Parsing arguments
+        arguments, values = getopt.getopt(argumentList, options, long_options)
 
-try:
-    # Parsing argument
-    arguments, values = getopt.getopt(argumentList, options, long_options)
+        for currentArgument, currentValue in arguments:
 
-    # checking each argument
-    for currentArgument, currentValue in arguments:
+            if currentArgument in ("-h", "--help"):
+                help()
 
-        if currentArgument in ("-h", "--help"):
-            help()
+            elif currentArgument in ("-t", "--track"):
 
-        elif currentArgument in ("-t", "--track"):
-
-            # Get title if spotify link given
-            if "https://spotify.com/track" in currentValue:
-                title = spotify_track(currentValue)
-            else:
-                title = currentValue
-
-            try:
-                results = yt_search(title).to_dict()
-                print(results[0]["title"])
-                url_suffix = results[0]["url_suffix"]
-
-                prompt = str(input("Is this correct? (Y/n)"))
-                if prompt == "n" or prompt == "N":
-                    exit(1)
+                if "https://spotify.com/track" in currentValue:
+                    title = spotify_track(currentValue)
+                elif "http" not in currentValue:
+                    title = currentValue
                 else:
-                    with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-                        ydl.download(["http://www.youtube.com" + url_suffix])
+                    print(f"{col.fail}Please provide a valid url!{col.end}")
 
-            except:
-                print("Unable to find " + title)
-                print("Please try a longer title!")
+                try:
+                    results = yt_search(title).to_dict()
+                    print(f'\n{col.blue}{results[0]["title"]}' + col.end + "\n")
+                    url_suffix = results[0]["url_suffix"]
 
-        elif currentArgument in ("-l", "--playlist"):
+                    prompt = prompt("Is this correct?")
 
-            valid_url = "https://open.spotify.com/playlist"
-            if valid_url in currentValue:
-
-                songs = spotify_playlist(currentValue)
-                print("")
-                for tag in songs:
-                    print(spotify_track(tag["content"]))
-
-                print("")
-
-                prompt = str(input("Is this correct? (Y/n)"))
-                if prompt == "n" or prompt == "N":
-                    exit(1)
-                else:
-                    for tag in songs:
-                        title = spotify_track(tag["content"])
-                        results = yt_search(title).to_dict()
-                        url_suffix = results[0]["url_suffix"]
+                    if prompt == "n" or prompt == "N":
+                        exit(1)
+                    else:
                         with youtube_dl.YoutubeDL(ydl_opts) as ydl:
                             ydl.download(["http://www.youtube.com" + url_suffix])
 
-        else:
-            help()
+                except IndexError:
+                    print(f"{col.fail}Unable to find {col.blue}{title}{col.end}")
 
-except getopt.error:
-    help()
+            elif currentArgument in ("-l", "--playlist"):
+
+                valid_url = "https://open.spotify.com/playlist"
+                if valid_url in currentValue:
+
+                    songs = spotify_playlist(currentValue)
+
+                    print("")
+
+                    for tag in songs:
+                        title = spotify_track(tag["content"])
+                        print(f"{col.blue}{title}{col.end}")
+
+                    print("")
+
+                    prompt = prompt("Is this correct?")
+
+                    if prompt == "n" or prompt == "N":
+                        exit(1)
+
+                    else:
+                        for tag in songs:
+                            title = spotify_track(tag["content"])
+                            results = yt_search(title).to_dict()
+                            url_suffix = results[0]["url_suffix"]
+                            with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+                                ydl.download(["http://www.youtube.com" + url_suffix])
+
+            else:
+                help()
+
+    except getopt.error:
+        help()
+
+    except KeyboardInterrupt:
+        exit(1)
