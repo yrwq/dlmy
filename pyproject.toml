@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "dlmy"
-version = "0.7"
+version = "1"
 description = "Yet another Spotify Downloader ..."
 authors = ["yrwq <yrwqid@gmail.com>"]
 license = "MIT"
@@ -10,6 +10,7 @@ python = "^3.9"
 requests = "^2.25.1"
 beautifulsoup4 = "^4.9.3"
 youtube_dl = "^2021.1.8"
+lxml = "^4.6.2"
 
 [tool.poetry.dev-dependencies]
 
