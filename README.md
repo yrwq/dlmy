@@ -16,6 +16,20 @@ Any contributions are welcomed!
 - [x] Download single tracks using a search query
 - [x] Download whole Spotify playlists
 
+### Installation
+
+#### Packages
+
+##### Pip
+
+```bash
+pip install dlmy
+```
+
+##### Aur
+
+In progress ...
+
 ### Usage
 
 ```bash
