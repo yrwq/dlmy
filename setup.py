@@ -12,6 +12,7 @@ setup(
   keywords = ['spotify', 'youtube_dl', 'spotipy'],
   install_requires=[
           'requests',
+          'youtube_dl',
           'beautifulsoup4',
       ],
   classifiers=[
