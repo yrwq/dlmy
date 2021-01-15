@@ -2,13 +2,13 @@ from distutils.core import setup
 setup(
   name = 'dlmy',
   packages = ['dlmy'],
-  version = '0.4',
+  version = '0.5',
   license='MIT',
   description = 'Yet another Spotify Downloader',
   author = 'Inhof Dávid',
   author_email = 'yrwqid@gmail.com',
   url = 'https://github.com/yrwq/dlmy',
-  download_url = 'https://github.com/yrwq/dlmy/archive/0.4.tar.gz',
+  download_url = 'https://github.com/yrwq/dlmy/archive/0.5.tar.gz',
   keywords = ['spotify', 'youtube_dl', 'spotipy'],
   install_requires=[
           'requests',

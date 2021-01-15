@@ -75,74 +75,73 @@ Usage:
 
 """)
 
-if __name__ == "__main__":
-    try:
-        # Parsing arguments
-        arguments, values = getopt.getopt(argumentList, options, long_options)
+try:
+    # Parsing arguments
+    arguments, values = getopt.getopt(argumentList, options, long_options)
 
-        for currentArgument, currentValue in arguments:
+    for currentArgument, currentValue in arguments:
 
-            if currentArgument in ("-h", "--help"):
-                help()
+        if currentArgument in ("-h", "--help"):
+            help()
 
-            elif currentArgument in ("-t", "--track"):
+        elif currentArgument in ("-t", "--track"):
 
-                if "https://spotify.com/track" in currentValue:
-                    title = spotify_track(currentValue)
-                elif "http" not in currentValue:
-                    title = currentValue
+            if "https://spotify.com/track" in currentValue:
+                title = spotify_track(currentValue)
+            elif "http" not in currentValue:
+                title = currentValue
+            else:
+                print(f"{col.fail}Please provide a valid url!{col.end}")
+
+            try:
+                results = yt_search(title).to_dict()
+                print(f'\n{col.blue}{results[0]["title"]}' + col.end + "\n")
+                url_suffix = results[0]["url_suffix"]
+
+                prompt = prompt("Is this correct?")
+
+                if prompt == "n" or prompt == "N":
+                    exit(1)
                 else:
-                    print(f"{col.fail}Please provide a valid url!{col.end}")
+                    with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+                        ydl.download(["http://www.youtube.com" + url_suffix])
 
-                try:
-                    results = yt_search(title).to_dict()
-                    print(f'\n{col.blue}{results[0]["title"]}' + col.end + "\n")
-                    url_suffix = results[0]["url_suffix"]
+            except IndexError:
+                print(f"{col.fail}Unable to find {col.blue}{title}{col.end}")
 
-                    prompt = prompt("Is this correct?")
+        elif currentArgument in ("-l", "--playlist"):
 
-                    if prompt == "n" or prompt == "N":
-                        exit(1)
-                    else:
+            valid_url = "https://open.spotify.com/playlist"
+            if valid_url in currentValue:
+
+                songs = spotify_playlist(currentValue)
+
+                print("")
+
+                for tag in songs:
+                    title = spotify_track(tag["content"])
+                    print(f"{col.blue}{title}{col.end}")
+
+                print("")
+
+                prompt = prompt("Is this correct?")
+
+                if prompt == "n" or prompt == "N":
+                    exit(1)
+
+                else:
+                    for tag in songs:
+                        title = spotify_track(tag["content"])
+                        results = yt_search(title).to_dict()
+                        url_suffix = results[0]["url_suffix"]
                         with youtube_dl.YoutubeDL(ydl_opts) as ydl:
                             ydl.download(["http://www.youtube.com" + url_suffix])
 
-                except IndexError:
-                    print(f"{col.fail}Unable to find {col.blue}{title}{col.end}")
+        else:
+            help()
 
-            elif currentArgument in ("-l", "--playlist"):
+except getopt.error:
+    help()
 
-                valid_url = "https://open.spotify.com/playlist"
-                if valid_url in currentValue:
-
-                    songs = spotify_playlist(currentValue)
-
-                    print("")
-
-                    for tag in songs:
-                        title = spotify_track(tag["content"])
-                        print(f"{col.blue}{title}{col.end}")
-
-                    print("")
-
-                    prompt = prompt("Is this correct?")
-
-                    if prompt == "n" or prompt == "N":
-                        exit(1)
-
-                    else:
-                        for tag in songs:
-                            title = spotify_track(tag["content"])
-                            results = yt_search(title).to_dict()
-                            url_suffix = results[0]["url_suffix"]
-                            with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-                                ydl.download(["http://www.youtube.com" + url_suffix])
-
-            else:
-                help()
-
-    except getopt.error:
-        help()
-
-    except KeyboardInterrupt:
-        exit(1)
+except KeyboardInterrupt:
+    exit(1)
