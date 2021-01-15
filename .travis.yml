@@ -16,8 +16,6 @@ install:
 jobs:
   include:
     - stage: Quality
-      name: lint
-      script: make lint
     - name: type
       script: make type
     - name: tests
