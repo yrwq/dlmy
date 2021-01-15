@@ -203,5 +203,3 @@ def main():
 
     except KeyboardInterrupt:
         exit(1)
-
-main()
