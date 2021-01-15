@@ -8,10 +8,10 @@ setup(
   author = 'Inhof Dávid',
   author_email = 'yrwqid@gmail.com',
   url = 'https://github.com/yrwq/dlmy',
-  download_url = 'https://github.com/yrwq/dlmy/archive/v_01.tar.gz',
+  download_url = 'https://github.com/yrwq/dlmy/archive/0.1.tar.gz',
   keywords = ['spotify', 'youtube_dl', 'spotipy'],
   install_requires=[
-          'validators',
+          'requests',
           'beautifulsoup4',
       ],
   classifiers=[
