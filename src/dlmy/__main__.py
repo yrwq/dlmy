@@ -4,6 +4,7 @@ import sys
 import getopt
 from dlmy import search
 from dlmy import download
+from youtube_search import YoutubeSearch as yt_search
 
 
 class col:
@@ -82,7 +83,7 @@ def main():
                     print(f"{col.fail}Please provide a valid url!{col.end}")
 
                 try:
-                    results = search.yt_search(title).to_dict()
+                    results = yt_search(title).to_dict()
                     title = results[0]["title"]
                     url_suffix = results[0]["url_suffix"]
 
@@ -122,7 +123,7 @@ def main():
                         print("")
                         for tag in songs:
                             title = search.spotify_track(tag["content"])
-                            results = search.yt_search(title).to_dict()
+                            results = yt_search(title).to_dict()
                             url_suffix = results[0]["url_suffix"]
 
                             print(

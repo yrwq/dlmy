@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "dlmy"
-version = "1.8"
+version = "2.2"
 description = "Yet another Spotify Downloader ..."
 readme = "README.md"
 authors = ["yrwq <yrwqid@gmail.com>"]
@@ -14,6 +14,7 @@ youtube_dl = "^2021.1.8"
 lxml = "^4.6.2"
 configparser = "^5.0.1"
 downloader-cli = "^0.3.1"
+youtube-search = "^1.1.1"
 
 [tool.poetry.dev-dependencies]
 
