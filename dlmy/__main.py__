@@ -117,15 +117,12 @@ long_options = ["help", "track", "playlist"]
 
 def help():
     print("""
-
 DLMY
-
 Usage:
     -h                      show help
     -t <spotify url>        download the url as mp3
     -t "track title"        download the title as mp3
     -l <spotify playlist>   download the url as mp3
-
 """)
 
 def main():
@@ -203,3 +200,6 @@ def main():
 
     except KeyboardInterrupt:
         exit(1)
+
+if __name__ == "__main__":
+    main()
