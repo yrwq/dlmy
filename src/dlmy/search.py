@@ -34,10 +34,7 @@ class yt_search:
         json_str = response[start:end]
         data = json.loads(json_str)
 
-        videos = data["contents"]
-        ["twoColumnSearchResultsRenderer"]
-        ["primaryContents"]["sectionListRenderer"]
-        ["contents"][0]["itemSectionRenderer"]["contents"]
+        videos = data["contents"]["twoColumnSearchResultsRenderer"]["primaryContents"]["sectionListRenderer"]["contents"][0]["itemSectionRenderer"]["contents"]
 
         for video in videos:
             res = {}
