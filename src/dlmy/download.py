@@ -3,7 +3,7 @@ from sys import stdout
 from downloader_cli.download import Download
 import youtube_dl
 import os
-import configuration
+from dlmy import configuration
 
 
 def progress_handler(d):
