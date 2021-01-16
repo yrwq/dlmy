@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "dlmy"
-version = "1.28"
+version = "1.53"
 description = "Yet another Spotify Downloader ..."
 readme = "README.md"
 authors = ["yrwq <yrwqid@gmail.com>"]
@@ -12,6 +12,7 @@ requests = "^2.25.1"
 beautifulsoup4 = "^4.9.3"
 youtube_dl = "^2021.1.8"
 lxml = "^4.6.2"
+configparser = "^5.0.1"
 
 [tool.poetry.dev-dependencies]
 
@@ -20,4 +21,4 @@ requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
-dlmy = 'dlmy:main'
+dlmy = 'dlmy.__main__:main'

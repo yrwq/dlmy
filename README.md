@@ -18,6 +18,11 @@ Any contributions are welcomed!
 
 ### Installation
 
+#### Dependencies
+
+The only dependency is `ffmpeg`, to embed metadata to tracks.
+If you wish to skip this you can change `metadata=True` to `metadata=False` in in the configuration file.
+
 #### Packages
 
 ##### Pip

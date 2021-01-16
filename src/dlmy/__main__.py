@@ -7,53 +7,55 @@ import sys
 import getopt
 import youtube_dl
 import time
+import configparser
+import os
+import shutil
 from bs4 import BeautifulSoup
+from dlmy import search
 
-class yt_search:
+# Initialize configparser
+config = configparser.ConfigParser()
+
+def get_config():
     """
-    Search on youtube with a title.
-    Returns: youtube url
+    Get the configuration path and file.
     """
-    def __init__(self, search_terms: str):
-        self.search_terms = search_terms
-        self.videos = self.search()
 
-    def search(self):
-        encoded_search = urllib.parse.quote(self.search_terms)
-        BASE_URL = "https://youtube.com"
-        url = f"{BASE_URL}/results?search_query={encoded_search}"
-        response = requests.get(url).text
-        while "ytInitialData" not in response:
-            response = requests.get(url).text
-        results = self.parse_html(response)
-        return results
+    user = os.getlogin()
 
-    def parse_html(self, response):
-        results = []
-        start = (
-            response.index("ytInitialData")
-            + len("ytInitialData")
-            + 3
-        )
-        end = response.index("};", start) + 1
-        json_str = response[start:end]
-        data = json.loads(json_str)
+    # Linux
+    if os.name == "posix":
+        # First try to locate XDG_CONFIG_HOME
+        if os.environ["XDG_CONFIG_HOME"]:
+            config_path = os.environ["XDG_CONFIG_HOME"] + "/dlmy/"
+        # Fallback to home env var
+        else:
+            config_path = os.environ["HOME"] + "/.config/dlmy/"
 
-        videos = data["contents"]["twoColumnSearchResultsRenderer"]["primaryContents"][
-            "sectionListRenderer"
-        ]["contents"][0]["itemSectionRenderer"]["contents"]
+    # Windows
+    elif os.name == "nt":
+        # First try to locate appdata
+        if os.environ["APPDATA"]:
+            config_path = os.environ["APPDATA"] + "\dlmy\\"
+        # If fails, fallback to manually locating appdata
+        else:
+            config_path = "C:\\Users\\" + user + "\AppData\Roaming\dlmy\\"
 
-        for video in videos:
-            res = {}
-            if "videoRenderer" in video.keys():
-                video_data = video.get("videoRenderer", {})
-                res["title"] = video_data.get("title", {}).get("runs", [[{}]])[0].get("text", None)
-                res["url_suffix"] = video_data.get("navigationEndpoint", {}).get("commandMetadata", {}).get("webCommandMetadata", {}).get("url", None)
-                results.append(res)
-        return results
+    # Create directories
+    if not os.path.exists(config_path):
+        os.makedirs(config_path)
 
-    def to_dict(self):
-        return self.videos
+    config_file = config_path + "config.ini"
+    example_config = os.getcwd() + "/config_example.ini"
+
+    if not os.path.isfile(config_file):
+        shutil.copy(example_config, config_path)
+        os.rename(config_path + "config_example.ini", config_file)
+
+    return config_file
+
+# Read config file
+config.read(get_config())
 
 class col:
     blue = '\033[94m'
