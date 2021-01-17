@@ -6,9 +6,8 @@ import json
 from colorama import init
 from dlmy import search
 from dlmy import download
-from dlmy import configuration
 
-init()
+init() # colorama
 
 
 class col:
@@ -27,16 +26,12 @@ def help_message():
     Shows usage of the application
     """
     print("""
-
 {}Usage:
-
     {}-h                      show help
     -t <spotify url>        download the url as mp3
     -t "track title"        download the title as mp3
     -l <spotify playlist>   download the url as mp3
-
 {}Examples:
-
     {}dlmy -t "Travis Scott - Stargazing"
     dlmy -t https://open.spotify.com/track/7wBJfHzpfI3032CSD7CE2m
     dlmy -l https://open.spotify.com/playlist/37i9dQZF1DWUgX5cUT0GbU
@@ -84,15 +79,6 @@ def main():
                     else:
                         print("")
                         download.download("https://youtube.com" + url_suffix, title)
-                        tag_artist = whole_title[0]
-                        tag_title = whole_title[1]
-
-                        if not tag_title.endswith("mp3"):
-                            tag_title += '.' + "mp3"
-
-                        dw_dir = configuration.config["DEFAULT"]["download_dir"]
-                        name = os.path.join(dw_dir, tag_title)
-                        download.tag(name, tag_artist, tag_title)
 
                 except IndexError:
                     print(f"{col.fail}Unable to find {col.blue}{title}{col.end}")

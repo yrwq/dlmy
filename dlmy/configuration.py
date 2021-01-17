@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+"""
+Parse configuration file
+"""
 import configparser
 import os
 import shutil

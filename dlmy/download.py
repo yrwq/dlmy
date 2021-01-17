@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
+"""
+Download from youtube using youtube_dl
+"""
 import youtube_dl
 import os
 import re
-from mutagen.mp3 import MP3
-from dlmy import search
 from dlmy import configuration
 
 
@@ -62,14 +63,3 @@ def download(url, title):
     ydl.download([url])
 
     return 0
-
-
-def tag(file, artist, title):
-    """
-    Tag an MP3 file with the corresponding metadata
-    """
-
-    audio = MP3(file)
-    audio["artist"] = artist
-    audio["title"] = title
-    audio.save()

@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "dlmy"
-version = "2.34"
+version = "2.38"
 description = "Yet another Spotify Downloader ..."
 readme = "README.md"
 authors = ["yrwq <yrwqid@gmail.com>"]
