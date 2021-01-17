@@ -2,10 +2,11 @@
 from __future__ import unicode_literals
 import sys
 import getopt
-from dlmy import search
-from dlmy import download
 import json
 from colorama import init
+from dlmy import search
+from dlmy import download
+from dlmy import configuration
 
 init()
 
@@ -83,6 +84,15 @@ def main():
                     else:
                         print("")
                         download.download("https://youtube.com" + url_suffix, title)
+                        tag_artist = whole_title[0]
+                        tag_title = whole_title[1]
+
+                        if not tag_title.endswith("mp3"):
+                            tag_title += '.' + "mp3"
+
+                        dw_dir = configuration.config["DEFAULT"]["download_dir"]
+                        name = os.path.join(dw_dir, tag_title)
+                        download.tag(name, tag_artist, tag_title)
 
                 except IndexError:
                     print(f"{col.fail}Unable to find {col.blue}{title}{col.end}")

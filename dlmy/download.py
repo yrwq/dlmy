@@ -12,7 +12,7 @@ def download(url, title):
     Download the music from YouTube,
     and move it to the download direcotry
     """
-
+    norm_title = title
     # Remove extra characters which can fuck up the final path
     title = re.sub("   ", "", title)
     title = re.sub("  ", "", title)
@@ -25,6 +25,7 @@ def download(url, title):
     dw_dir = configuration.config["DEFAULT"]["download_dir"]
 
     name = os.path.join(dw_dir, title)
+    norm_name = os.path.join(dw_dir, norm_title)
 
     if configuration.config["DEFAULT"]["ffmpeg"] == "True":
         ydl_opts = {
@@ -32,7 +33,7 @@ def download(url, title):
             'writethumbnail': True,
             'noplaylist': True,
             'restrictfilenames': True,
-            'outtmpl': name,
+            'outtmpl': norm_name,
             'continue_dl': True,
             'quiet': True,
             'no_warnings': True,
@@ -59,12 +60,6 @@ def download(url, title):
     ydl = youtube_dl.YoutubeDL(ydl_opts)
 
     ydl.download([url])
-
-    whole_title = search.spotify_track(url)
-    artist = whole_title[0]
-    title = whole_title[1]
-
-    tag(name, artist, title)
 
     return 0
 
