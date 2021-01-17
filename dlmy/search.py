@@ -17,7 +17,7 @@ def spotify_track(url):
     title = soup.find("meta", property="og:title")
     title = title["content"]
     artist = soup.find("meta", property="twitter:audio:artist_name")
-    artist = artist["content"]
+    artist = artist
     song_name = [artist, title]
 
     return song_name

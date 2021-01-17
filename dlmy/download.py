@@ -2,7 +2,7 @@
 import youtube_dl
 import os
 import re
-import music_tag
+from mutagen.mp3 import MP3
 from dlmy import search
 from dlmy import configuration
 
@@ -23,10 +23,6 @@ def download(url, title):
         title += '.' + "mp3"
 
     dw_dir = configuration.config["DEFAULT"]["download_dir"]
-
-    whole = search.spotify_track(url)
-    artist = whole[0]
-    track = whole[1]
 
     name = os.path.join(dw_dir, title)
 
@@ -64,9 +60,21 @@ def download(url, title):
 
     ydl.download([url])
 
-    f = music_tag.load_file(name)
-    f["title"] = track
-    f["artist"] = artist
-    f.save()
+    whole_title = search.spotify_track(url)
+    artist = whole_title[0]
+    title = whole_title[1]
+
+    tag(name, artist, title)
 
     return 0
+
+
+def tag(file, artist, title):
+    """
+    Tag an MP3 file with the corresponding metadata
+    """
+
+    audio = MP3(file)
+    audio["artist"] = artist
+    audio["title"] = title
+    audio.save()

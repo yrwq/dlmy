@@ -74,7 +74,7 @@ def main():
                     title = results["videos"][0]["title"]
                     url_suffix = results["videos"][0]["url_suffix"]
 
-                    print(f'\n{col.blue}🎵 {title}' + col.end + "\n")
+                    print(f'\n{col.blue} {title}' + col.end + "\n")
 
                     prompt = str(input(f"{col.ok}✔ Is this correct? {col.warn}(Y/n){col.end}"))
 
@@ -100,7 +100,7 @@ def main():
 
                     for tag in songs[0]:
                         try:
-                            title = search.spotify_track(tag["content"])
+                            title = search.spotify_track(tag)
                             print(f"{col.blue}{title}{col.end}")
                         except IndexError:
                             print(f"\n{col.fail}Can't find all song's!")
@@ -116,7 +116,7 @@ def main():
                     else:
                         print("")
                         for tag in songs[0]:
-                            title = search.spotify_track(tag["content"])
+                            title = search.spotify_track(tag)
                             results = search.yt_search(title)
                             results = json.loads(results)
                             url_suffix = results["videos"][0]["url_suffix"]
