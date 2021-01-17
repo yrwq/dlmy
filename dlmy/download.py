@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 import youtube_dl
-from dlmy import configuration
 import os
 import re
 import music_tag
 from dlmy import search
+from dlmy import configuration
 
 
 def download(url, title):
@@ -24,7 +24,11 @@ def download(url, title):
 
     dw_dir = configuration.config["DEFAULT"]["download_dir"]
 
-    name = os.path.join(dw_dir, title, artist, track)
+    whole = search.spotify_track(url)
+    artist = whole[0]
+    track = whole[1]
+
+    name = os.path.join(dw_dir, title)
 
     if configuration.config["DEFAULT"]["ffmpeg"] == "True":
         ydl_opts = {
@@ -61,6 +65,8 @@ def download(url, title):
     ydl.download([url])
 
     f = music_tag.load_file(name)
+    f["title"] = track
+    f["artist"] = artist
     f.save()
 
     return 0

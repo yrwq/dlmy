@@ -2,10 +2,8 @@
 from __future__ import unicode_literals
 import sys
 import getopt
-# from dlmy import search
-# from dlmy import download
-import download
-import search
+from dlmy import search
+from dlmy import download
 import json
 from colorama import init
 
