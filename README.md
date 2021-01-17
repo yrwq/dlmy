@@ -3,8 +3,8 @@
 ### Introduction
 
 Yet another Spotify Downloader omg. 🤐
-Dlmy uses the given Spotify Track's metadata tags, to extract information about the music.
-After extracting information, the music is downloaded from YouTube using [youtube_dl](https://github.com/ytdl-org/youtube-dl).
+
+Dlmy uses the given Spotify Track's metadata tags, to extract information about the music. After extracting information, the music is downloaded from YouTube using [youtube_dl](https://github.com/ytdl-org/youtube-dl).
 
 Any contributions are welcomed!
 
