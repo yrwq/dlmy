@@ -2,9 +2,14 @@
 from __future__ import unicode_literals
 import sys
 import getopt
-from dlmy import search
-from dlmy import download
-from youtube_search import YoutubeSearch as yt_search
+# from dlmy import search
+# from dlmy import download
+import download
+import search
+import json
+from colorama import init
+
+init()
 
 
 class col:
@@ -16,26 +21,6 @@ class col:
     warn = '\033[93m'
     fail = '\033[91m'
     end = '\033[0m'
-
-
-# Youtube Download options
-ydl_opts = {
-    'format': 'bestaudio/best',
-    'writethumbnail': True,
-    'noplaylist': True,
-    'continue_dl': True,
-    'restrictfilenames': True,
-    'quiet': True,
-    'no_warnings': True,
-    'postprocessors': [
-        {
-            'key': 'FFmpegExtractAudio',
-            'preferredcodec': 'mp3',
-        },
-        {'key': 'EmbedThumbnail'},
-        {'key': 'FFmpegMetadata'},
-    ],
-}
 
 
 def help_message():
@@ -65,8 +50,7 @@ def main():
     Program starts here
     """
     try:
-        options, remainder = getopt.getopt(
-            sys.argv[1:], 'ht:l:', ['playlist', 'track', 'help'])
+        options, remainder = getopt.getopt(sys.argv[1:], 'ht:l:', ['playlist', 'track', 'help'])
 
         for opt, arg in options:
 
@@ -75,25 +59,31 @@ def main():
 
             elif opt in ("-t", "--track"):
 
-                if "https://spotify.com/track" in arg:
-                    title = search.spotify_track(arg)
+                valid_url = "https://open.spotify.com/track"
+
+                if valid_url in arg:
+                    whole_title = search.spotify_track(arg)
+                    title = whole_title[0] + " - " + whole_title[1]
                 elif "http" not in arg:
                     title = arg
                 else:
-                    print(f"{col.fail}Please provide a valid url!{col.end}")
+                    print(f"{col.fail}❌ {col.warn}Please provide a valid url!{col.end}")
 
                 try:
-                    results = yt_search(title).to_dict()
-                    title = results[0]["title"]
-                    url_suffix = results[0]["url_suffix"]
+                    results = search.yt_search(title)
+                    results = json.loads(results)
 
-                    print(f'\n{col.blue}{title}' + col.end + "\n")
+                    title = results["videos"][0]["title"]
+                    url_suffix = results["videos"][0]["url_suffix"]
 
-                    prompt = str(input(f"{col.ok}Is this correct? {col.warn}(Y/n){col.end}"))
+                    print(f'\n{col.blue}🎵 {title}' + col.end + "\n")
+
+                    prompt = str(input(f"{col.ok}✔ Is this correct? {col.warn}(Y/n){col.end}"))
 
                     if prompt in ("n", "N"):
                         sys.exit()
                     else:
+                        print("")
                         download.download("https://youtube.com" + url_suffix, title)
 
                 except IndexError:
@@ -102,15 +92,21 @@ def main():
             elif opt in ("-l", "--playlist"):
 
                 valid_url = "https://open.spotify.com/playlist"
+
                 if valid_url in arg:
 
                     songs = search.spotify_playlist(arg)
+                    album_title = songs[1]
 
-                    print("")
+                    print(f"\n{col.ok}Contents of: {col.warn}{album_title}{col.end}\n")
 
-                    for tag in songs:
-                        title = search.spotify_track(tag["content"])
-                        print(f"{col.blue}{title}{col.end}")
+                    for tag in songs[0]:
+                        try:
+                            title = search.spotify_track(tag["content"])
+                            print(f"{col.blue}{title}{col.end}")
+                        except IndexError:
+                            print(f"\n{col.fail}Can't find all song's!")
+                            sys.exit()
 
                     print("")
 
@@ -121,14 +117,12 @@ def main():
 
                     else:
                         print("")
-                        for tag in songs:
+                        for tag in songs[0]:
                             title = search.spotify_track(tag["content"])
-                            results = yt_search(title).to_dict()
-                            url_suffix = results[0]["url_suffix"]
-
-                            print(
-                                f"{col.warn}Downloading: {col.blue}{results[0]['title']}{col.end}")
-
+                            results = search.yt_search(title)
+                            results = json.loads(results)
+                            url_suffix = results["videos"][0]["url_suffix"]
+                            print(f"{col.ok}Downloading: {col.blue}{title}")
                             download.download("https://youtube.com" + url_suffix, title)
 
             else:

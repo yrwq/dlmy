@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 from __future__ import unicode_literals
 from bs4 import BeautifulSoup
+import json
 import requests
+import urllib.request
 
 
 def spotify_track(url):
@@ -16,7 +18,7 @@ def spotify_track(url):
     title = title["content"]
     artist = soup.find("meta", property="twitter:audio:artist_name")
     artist = artist["content"]
-    song_name = str(artist + " - " + title)
+    song_name = [artist, title]
 
     return song_name
 
@@ -30,5 +32,49 @@ def spotify_playlist(url):
     res = requests.get(url)
     soup = BeautifulSoup(res.text, 'lxml')
     songs = soup.find_all('meta', property="music:song")
+    title = soup.find('meta', property="twitter:title")
+    title = title["content"]
 
-    return songs
+    data = [songs, title]
+
+    return data
+
+
+def parse_html(response):
+    """
+    """
+    results = []
+    start = (response.index("ytInitialData") + len("ytInitialData") + 3)
+    end = response.index("};", start) + 1
+    json_str = response[start:end]
+    data = json.loads(json_str)
+
+    videos = data["contents"]["twoColumnSearchResultsRenderer"]["primaryContents"]["sectionListRenderer"]["contents"][0]["itemSectionRenderer"]["contents"]
+
+    for video in videos:
+        res = {}
+        if "videoRenderer" in video.keys():
+            video_data = video.get("videoRenderer", {})
+            res["title"] = video_data.get("title", {}).get("runs", [[{}]])[0].get("text", None)
+            res["url_suffix"] = video_data.get("navigationEndpoint", {}).get("commandMetadata", {}).get("webCommandMetadata", {}).get("url", None)
+            results.append(res)
+
+    results = json.dumps({"videos": results})
+    return results
+
+
+def yt_search(query):
+    """
+    Search on youtube using a query
+    Returns: video ids
+    """
+
+    encoded_search = urllib.parse.quote(query)
+    BASE_URL = "https://youtube.com"
+    url = f"{BASE_URL}/results?search_query={encoded_search}"
+    response = requests.get(url).text
+    while "ytInitialData" not in response:
+        response = requests.get(url).text
+    results = parse_html(response)
+
+    return results
