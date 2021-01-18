@@ -4,10 +4,8 @@ import sys
 import getopt
 import json
 from colorama import init
-# from dlmy import search
-# from dlmy import download
-import search
-import download
+from dlmy import search
+from dlmy import download
 
 
 init()  # colorama
