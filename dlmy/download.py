@@ -25,6 +25,8 @@ def download(url, title):
         title += '.' + "mp3"
 
     dw_dir = configuration.config["DEFAULT"]["download_dir"]
+    if not dw_dir.endswith("/"):
+        dw_dir += "/"
 
     name = os.path.join(dw_dir, title)
 
@@ -34,7 +36,7 @@ def download(url, title):
             'writethumbnail': True,
             'noplaylist': True,
             'restrictfilenames': True,
-            'outtmpl': name,
+            'outtmpl': f"{dw_dir}%(title)s.%(ext)s",
             'quiet': True,
             'no_warnings': True,
             'postprocessors': [
