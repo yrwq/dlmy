@@ -17,10 +17,13 @@ def spotify_track(url):
 
     res = requests.get(url)
     soup = BeautifulSoup(res.text, "lxml")
+
     title = soup.find("meta", property="og:title")
-    title = title["content"]
     artist = soup.find("meta", property="twitter:audio:artist_name")
-    artist = artist
+
+    title = title["content"]
+    artist = artist["content"]
+
     song_name = [artist, title]
 
     return song_name

@@ -18,7 +18,8 @@ def download(url, title):
     title = re.sub("   ", "", title)
     title = re.sub("  ", "", title)
     title = re.sub(" ", "_", title)
-    title = re.sub("/", "", title)
+    title = re.sub("%", "", title)
+    title = re.sub(r"[^\x00-\x7f]", r"", title)
 
     if not title.endswith("mp3"):
         title += '.' + "mp3"
@@ -59,6 +60,9 @@ def download(url, title):
         }
 
     ydl = youtube_dl.YoutubeDL(ydl_opts)
+
+    print(title)
+    print(name)
 
     ydl.download([url])
 

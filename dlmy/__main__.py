@@ -4,10 +4,13 @@ import sys
 import getopt
 import json
 from colorama import init
-from dlmy import search
-from dlmy import download
+# from dlmy import search
+# from dlmy import download
+import search
+import download
 
-init() # colorama
+
+init()  # colorama
 
 
 class col:
@@ -57,7 +60,7 @@ def main():
 
                 if valid_url in arg:
                     whole_title = search.spotify_track(arg)
-                    title = whole_title[0] + " - " + whole_title[1]
+                    title = f"{whole_title[0]} - {whole_title[1]}"
                 elif "http" not in arg:
                     title = arg
                 else:
@@ -92,19 +95,20 @@ def main():
                     songs = search.spotify_playlist(arg)
                     album_title = songs[1]
 
-                    print(f"\n{col.ok}Contents of: {col.warn}{album_title}{col.end}\n")
+                    print(f"\n{col.ok} Contents of: {col.warn}{album_title}{col.end}\n")
 
                     for tag in songs[0]:
                         try:
-                            title = search.spotify_track(tag)
-                            print(f"{col.blue}{title}{col.end}")
+                            title = search.spotify_track(tag["content"])
+                            whole_title = f"{title[0]} - {title[1]}"
+                            print(f"{col.blue} {whole_title}{col.end}")
                         except IndexError:
-                            print(f"\n{col.fail}Can't find all song's!")
+                            print(f"\n{col.fail}❌Can't find all song's!")
                             sys.exit()
 
                     print("")
 
-                    prompt = str(input(f"{col.ok}Is this correct? {col.warn}(Y/n){col.end}"))
+                    prompt = str(input(f"{col.ok} Is this correct? {col.warn}(Y/n){col.end}"))
 
                     if prompt in ("n", "N"):
                         sys.exit()
@@ -112,12 +116,13 @@ def main():
                     else:
                         print("")
                         for tag in songs[0]:
-                            title = search.spotify_track(tag)
-                            results = search.yt_search(title)
+                            title = search.spotify_track(tag["content"])
+                            whole_title = f"{title[0]} - {title[1]}"
+                            results = search.yt_search(whole_title)
                             results = json.loads(results)
                             url_suffix = results["videos"][0]["url_suffix"]
-                            print(f"{col.ok}Downloading: {col.blue}{title}")
-                            download.download("https://youtube.com" + url_suffix, title)
+                            print(f"{col.ok} Downloading: {col.blue}{whole_title}")
+                            download.download("https://youtube.com" + url_suffix, whole_title)
 
             else:
                 help_message()
