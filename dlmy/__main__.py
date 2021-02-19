@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+"""
+Yet another Spotify downloader
+"""
 from __future__ import unicode_literals
 import sys
 import getopt

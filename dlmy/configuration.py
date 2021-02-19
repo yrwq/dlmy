@@ -8,7 +8,6 @@ import shutil
 
 config = configparser.ConfigParser()
 
-
 def get_config():
     """
     Get the configuration path and file.
@@ -39,11 +38,15 @@ def get_config():
         os.makedirs(config_path)
 
     config_file = config_path + "config.ini"
-    example_config = os.getcwd() + "/config_example.ini"
 
     if not os.path.isfile(config_file):
-        shutil.copy(example_config, config_path)
-        os.rename(config_path + "config_example.ini", config_file)
+        f = open("demofile3.txt", "wx")
+        f.write("""
+[DEFAULT]
+music_dir = ~/Music
+ffmpeg = True
+                """)
+        f.close()
 
     return config_file
 
