@@ -40,7 +40,7 @@ def get_config():
     config_file = config_path + "config.ini"
 
     if not os.path.isfile(config_file):
-        f = open("demofile3.txt", "wx")
+        f = open(config_file, "w")
         f.write("""
 [DEFAULT]
 music_dir = ~/Music
